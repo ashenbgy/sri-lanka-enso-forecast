@@ -1,0 +1,540 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sri Lanka El Niño Outlook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Sinhala:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  color-scheme: light;
+  --page: #f9f9f7; --surface: #fcfcfb; --border: rgba(11,11,11,0.10);
+  --ink: #0b0b0b; --ink-2: #52514e; --muted: #898781;
+  --grid: #e1e0d9; --axis: #c3c2b7; --wash: #f0efec;
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a;
+  --wet: #2a78d6; --dry: #e34948; --neutral: #898781;
+  --div-neg: #e34948; --div-mid: #f0efec; --div-pos: #2a78d6;
+  --seq-lo: #cde2fb; --seq-hi: #104281;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --page: #0d0d0d; --surface: #1a1a19; --border: rgba(255,255,255,0.10);
+    --ink: #f0efec; --ink-2: #c3c2b7; --muted: #898781;
+    --grid: #2c2c2a; --axis: #383835; --wash: #262624;
+    --s1: #3987e5; --s2: #d95926; --s3: #199e70;
+    --wet: #3987e5; --dry: #e66767; --neutral: #898781;
+    --div-neg: #e66767; --div-mid: #383835; --div-pos: #3987e5;
+    --seq-lo: #22303f; --seq-hi: #6da7ec;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page: #0d0d0d; --surface: #1a1a19; --border: rgba(255,255,255,0.10);
+  --ink: #f0efec; --ink-2: #c3c2b7; --muted: #898781;
+  --grid: #2c2c2a; --axis: #383835; --wash: #262624;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70;
+  --wet: #3987e5; --dry: #e66767; --neutral: #898781;
+  --div-neg: #e66767; --div-mid: #383835; --div-pos: #3987e5;
+  --seq-lo: #22303f; --seq-hi: #6da7ec;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--page); color: var(--ink);
+  font: 17px/1.6 system-ui, -apple-system, "Segoe UI", "Noto Sans Sinhala", sans-serif;
+}
+main { max-width: 980px; margin: 0 auto; padding: 24px 16px 64px; }
+h1 { font-size: 2rem; line-height: 1.25; margin: 0 0 6px; }
+h2 { font-size: 1.35rem; line-height: 1.35; margin: 0 0 6px; }
+p { margin: 0 0 12px; }
+.sub { color: var(--ink-2); }
+.small { font-size: 0.9rem; color: var(--ink-2); }
+.topbar { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+.lang { display: inline-flex; border: 1px solid var(--border); border-radius: 999px; overflow: hidden; background: var(--surface); }
+.lang button { border: 0; background: none; color: var(--ink-2); padding: 8px 16px; font: inherit; font-size: 0.95rem; cursor: pointer; }
+.lang button[aria-pressed="true"] { background: var(--ink); color: var(--surface); font-weight: 600; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 22px; margin-top: 20px; }
+.notice { background: var(--wash); border-radius: 10px; padding: 10px 14px; font-size: 0.92rem; color: var(--ink-2); margin-top: 14px; }
+
+.summary { list-style: none; padding: 0; margin: 8px 0 0; }
+.summary li { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--grid); }
+.summary li:last-child { border-bottom: 0; }
+.summary .ic { font-size: 1.5rem; line-height: 1.2; flex: none; width: 2rem; text-align: center; }
+
+.months { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-top: 14px; }
+.month { border: 1px solid var(--border); border-left: 5px solid var(--neutral); border-radius: 10px; padding: 12px 14px; }
+.month.wet { border-left-color: var(--wet); }
+.month.dry { border-left-color: var(--dry); }
+.month .name { font-weight: 600; }
+.month .big { font-size: 2rem; line-height: 1.2; margin: 4px 0; }
+.month .verdict { font-weight: 600; }
+.month .amount, .month .sure { color: var(--ink-2); font-size: 0.92rem; }
+
+.effects { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; margin-top: 12px; }
+.effect { background: var(--wash); border-radius: 10px; padding: 10px; text-align: center; }
+.effect .e { font-size: 1.4rem; }
+.effect .m { font-weight: 600; }
+.effect .w { font-size: 0.88rem; color: var(--ink-2); }
+.callout { border-left: 4px solid var(--s1); padding: 6px 0 6px 14px; margin-top: 14px; }
+
+.regions { list-style: none; padding: 0; margin: 12px 0 0; }
+.regions li { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; padding: 10px 0; border-bottom: 1px solid var(--grid); }
+.regions .lvl { font-weight: 600; white-space: nowrap; }
+.regions .times { grid-column: 1 / -1; color: var(--ink-2); font-size: 0.92rem; }
+
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-top: 12px; }
+.fact { background: var(--wash); border-radius: 10px; padding: 12px 14px; }
+.fact .v { font-size: 1.5rem; font-weight: 600; }
+.fact .l { color: var(--ink-2); font-size: 0.92rem; }
+
+.chart { position: relative; height: 300px; margin-top: 12px; }
+.key { display: flex; gap: 16px; flex-wrap: wrap; font-size: 0.92rem; color: var(--ink-2); margin-top: 8px; }
+.key i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+details { margin-top: 14px; border-top: 1px solid var(--grid); padding-top: 10px; }
+summary { cursor: pointer; color: var(--s1); font-weight: 600; font-size: 0.95rem; }
+.scroll { overflow-x: auto; margin-top: 12px; }
+table { border-collapse: collapse; width: 100%; font-size: 0.9rem; font-variant-numeric: tabular-nums; }
+th, td { padding: 6px 8px; text-align: right; border-bottom: 1px solid var(--grid); white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; }
+th { color: var(--ink-2); font-weight: 600; }
+table.heat td:not(:first-child) { text-align: center; border: 2px solid var(--surface); }
+dl { margin: 8px 0 0; }
+dt { font-weight: 700; margin-top: 12px; }
+dd { margin: 2px 0 0; color: var(--ink-2); }
+footer { margin-top: 28px; color: var(--ink-2); font-size: 0.9rem; }
+</style>
+</head>
+<body>
+<main>
+  <div class="topbar">
+    <div>
+      <h1 data-t="title"></h1>
+      <p class="sub" id="asof"></p>
+    </div>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" data-lang="en">English</button>
+      <button type="button" data-lang="si">සිංහල</button>
+    </div>
+  </div>
+  <p class="notice" data-t="disclaimer"></p>
+
+  <section class="card">
+    <h2 data-t="sumH"></h2>
+    <ul class="summary" id="summary"></ul>
+  </section>
+
+  <section class="card">
+    <h2 data-t="slH"></h2>
+    <p class="sub" data-t="slP"></p>
+    <div class="months" id="months"></div>
+    <div class="chart"><canvas id="rainChart" role="img"></canvas></div>
+    <div class="key"><span><i style="background:var(--wet)"></i><span data-t="keyWet"></span></span>
+      <span><i style="background:var(--dry)"></i><span data-t="keyDry"></span></span></div>
+    <details><summary data-t="showNumbers"></summary><div class="scroll"><table id="rainTable"></table></div></details>
+  </section>
+
+  <section class="card">
+    <h2 data-t="whyH"></h2>
+    <p class="sub" data-t="whyP"></p>
+    <div class="effects" id="effects"></div>
+    <p class="callout" data-t="whyNote"></p>
+    <details><summary data-t="allRegions"></summary>
+      <p class="small" data-t="corrHelp"></p>
+      <div class="scroll"><table class="heat" id="corrTable"></table></div></details>
+  </section>
+
+  <section class="card">
+    <h2 data-t="oniH"></h2>
+    <p class="sub" data-t="oniP"></p>
+    <div class="chart"><canvas id="oniChart" role="img"></canvas></div>
+    <details><summary data-t="showNumbers"></summary><div class="scroll"><table id="oniTable"></table></div></details>
+  </section>
+
+  <section class="card">
+    <h2 data-t="worldH"></h2>
+    <p class="sub" id="worldP"></p>
+    <ul class="regions" id="regions"></ul>
+    <details><summary data-t="expertTable"></summary>
+      <p class="small" data-t="riskHelp"></p>
+      <div class="scroll"><table class="heat" id="riskTable"></table></div></details>
+  </section>
+
+  <section class="card">
+    <h2 data-t="trustH"></h2>
+    <p id="trustP"></p>
+    <div class="facts" id="facts"></div>
+    <details><summary data-t="expertChart"></summary>
+      <div class="chart"><canvas id="skillChart" role="img"></canvas></div>
+      <div class="scroll"><table id="skillTable"></table></div></details>
+  </section>
+
+  <section class="card">
+    <h2 data-t="glossH"></h2>
+    <dl id="gloss"></dl>
+  </section>
+
+  <footer>
+    <p data-t="sources"></p>
+    <p data-t="limits"></p>
+  </footer>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+const DATA = {"generated": "2026-11-12", "last_month": "2026-09-01", "last_oni": 2.46, "record": {"month": "2015-12-01", "oni": 2.59}, "history": [{"month": "2023-10-01", "oni": 1.74}, {"month": "2023-11-01", "oni": 1.9}, {"month": "2023-12-01", "oni": 1.99}, {"month": "2024-01-01", "oni": 1.84}, {"month": "2024-02-01", "oni": 1.53}, {"month": "2024-03-01", "oni": 1.18}, {"month": "2024-04-01", "oni": 0.77}, {"month": "2024-05-01", "oni": 0.43}, {"month": "2024-06-01", "oni": 0.18}, {"month": "2024-07-01", "oni": 0.06}, {"month": "2024-08-01", "oni": -0.04}, {"month": "2024-09-01", "oni": -0.12}, {"month": "2024-10-01", "oni": -0.19}, {"month": "2024-11-01", "oni": -0.29}, {"month": "2024-12-01", "oni": -0.43}, {"month": "2025-01-01", "oni": -0.46}, {"month": "2025-02-01", "oni": -0.22}, {"month": "2025-03-01", "oni": -0.08}, {"month": "2025-04-01", "oni": 0.02}, {"month": "2025-05-01", "oni": -0.04}, {"month": "2025-06-01", "oni": -0.02}, {"month": "2025-07-01", "oni": -0.11}, {"month": "2025-08-01", "oni": -0.26}, {"month": "2025-09-01", "oni": -0.43}, {"month": "2025-10-01", "oni": -0.57}, {"month": "2025-11-01", "oni": -0.61}, {"month": "2025-12-01", "oni": -0.6}, {"month": "2026-01-01", "oni": -0.39}, {"month": "2026-02-01", "oni": -0.21}, {"month": "2026-03-01", "oni": 0.11}, {"month": "2026-04-01", "oni": 0.46}, {"month": "2026-05-01", "oni": 0.95}, {"month": "2026-06-01", "oni": 1.39}, {"month": "2026-07-01", "oni": 1.8}, {"month": "2026-08-01", "oni": 2.16}, {"month": "2026-09-01", "oni": 2.46}], "forecast": [{"month": "2026-10-01", "lead": 1.0, "oni_mean": 2.695, "oni_p10": 2.524, "oni_p90": 2.866, "oni_sd": 0.133, "p_el_nino": 1.0, "p_la_nina": 0.0}, {"month": "2026-11-01", "lead": 2.0, "oni_mean": 2.777, "oni_p10": 2.45, "oni_p90": 3.104, "oni_sd": 0.255, "p_el_nino": 1.0, "p_la_nina": 0.0}, {"month": "2026-12-01", "lead": 3.0, "oni_mean": 2.724, "oni_p10": 2.234, "oni_p90": 3.214, "oni_sd": 0.382, "p_el_nino": 1.0, "p_la_nina": 0.0}, {"month": "2027-01-01", "lead": 4.0, "oni_mean": 2.529, "oni_p10": 1.892, "oni_p90": 3.165, "oni_sd": 0.497, "p_el_nino": 1.0, "p_la_nina": 0.0}, {"month": "2027-02-01", "lead": 5.0, "oni_mean": 2.215, "oni_p10": 1.457, "oni_p90": 2.973, "oni_sd": 0.591, "p_el_nino": 0.998, "p_la_nina": 0.0}, {"month": "2027-03-01", "lead": 6.0, "oni_mean": 1.833, "oni_p10": 0.972, "oni_p90": 2.694, "oni_sd": 0.672, "p_el_nino": 0.976, "p_la_nina": 0.0}, {"month": "2027-04-01", "lead": 7.0, "oni_mean": 1.44, "oni_p10": 0.508, "oni_p90": 2.373, "oni_sd": 0.728, "p_el_nino": 0.902, "p_la_nina": 0.004}, {"month": "2027-05-01", "lead": 8.0, "oni_mean": 1.051, "oni_p10": 0.08, "oni_p90": 2.023, "oni_sd": 0.758, "p_el_nino": 0.766, "p_la_nina": 0.02}, {"month": "2027-06-01", "lead": 9.0, "oni_mean": 0.714, "oni_p10": -0.28, "oni_p90": 1.708, "oni_sd": 0.776, "p_el_nino": 0.609, "p_la_nina": 0.059}, {"month": "2027-07-01", "lead": 10.0, "oni_mean": 0.433, "oni_p10": -0.567, "oni_p90": 1.433, "oni_sd": 0.78, "p_el_nino": 0.466, "p_la_nina": 0.116}, {"month": "2027-08-01", "lead": 11.0, "oni_mean": 0.214, "oni_p10": -0.78, "oni_p90": 1.207, "oni_sd": 0.775, "p_el_nino": 0.356, "p_la_nina": 0.179}, {"month": "2027-09-01", "lead": 12.0, "oni_mean": 0.04, "oni_p10": -0.943, "oni_p90": 1.023, "oni_sd": 0.767, "p_el_nino": 0.274, "p_la_nina": 0.241}], "rain": [{"month": "2026-10-01", "rain_anomaly_mm": 132.523, "p10_mm": 51.89, "p90_mm": 212.402, "chance_wetter_than_normal": 0.978, "el_nino_effect_mm_per_degC": 47.309}, {"month": "2026-11-01", "rain_anomaly_mm": 40.044, "p10_mm": -61.649, "p90_mm": 142.322, "chance_wetter_than_normal": 0.686, "el_nino_effect_mm_per_degC": 12.54}, {"month": "2026-12-01", "rain_anomaly_mm": 24.778, "p10_mm": -98.239, "p90_mm": 149.601, "chance_wetter_than_normal": 0.595, "el_nino_effect_mm_per_degC": 14.776}, {"month": "2027-01-01", "rain_anomaly_mm": -61.182, "p10_mm": -156.909, "p90_mm": 34.851, "chance_wetter_than_normal": 0.204, "el_nino_effect_mm_per_degC": -25.16}, {"month": "2027-02-01", "rain_anomaly_mm": -67.833, "p10_mm": -143.283, "p90_mm": 5.835, "chance_wetter_than_normal": 0.12, "el_nino_effect_mm_per_degC": -31.72}, {"month": "2027-03-01", "rain_anomaly_mm": -46.594, "p10_mm": -107.649, "p90_mm": 12.656, "chance_wetter_than_normal": 0.16, "el_nino_effect_mm_per_degC": -27.663}, {"month": "2027-04-01", "rain_anomaly_mm": -47.151, "p10_mm": -114.789, "p90_mm": 20.624, "chance_wetter_than_normal": 0.185, "el_nino_effect_mm_per_degC": -32.871}, {"month": "2027-05-01", "rain_anomaly_mm": 35.69, "p10_mm": -45.413, "p90_mm": 118.315, "chance_wetter_than_normal": 0.708, "el_nino_effect_mm_per_degC": 34.618}, {"month": "2027-06-01", "rain_anomaly_mm": 2.576, "p10_mm": -37.838, "p90_mm": 42.182, "chance_wetter_than_normal": 0.538, "el_nino_effect_mm_per_degC": -5.99}, {"month": "2027-07-01", "rain_anomaly_mm": -2.899, "p10_mm": -52.246, "p90_mm": 47.57, "chance_wetter_than_normal": 0.464, "el_nino_effect_mm_per_degC": -23.461}, {"month": "2027-08-01", "rain_anomaly_mm": 3.942, "p10_mm": -34.306, "p90_mm": 42.28, "chance_wetter_than_normal": 0.545, "el_nino_effect_mm_per_degC": -7.511}, {"month": "2027-09-01", "rain_anomaly_mm": 8.419, "p10_mm": -56.703, "p90_mm": 72.789, "chance_wetter_than_normal": 0.573, "el_nino_effect_mm_per_degC": 11.207}], "skill": [{"lead": 1.0, "Model": 0.1334, "Persistence": 0.207, "Climatology": 0.9342, "test months": 140.0, "Skill vs persistence": 0.3553}, {"lead": 2.0, "Model": 0.2551, "Persistence": 0.4014, "Climatology": 0.9359, "test months": 139.0, "Skill vs persistence": 0.3645}, {"lead": 3.0, "Model": 0.3822, "Persistence": 0.5809, "Climatology": 0.9373, "test months": 138.0, "Skill vs persistence": 0.342}, {"lead": 4.0, "Model": 0.4965, "Persistence": 0.7414, "Climatology": 0.9379, "test months": 137.0, "Skill vs persistence": 0.3303}, {"lead": 5.0, "Model": 0.5913, "Persistence": 0.8823, "Climatology": 0.9371, "test months": 136.0, "Skill vs persistence": 0.3298}, {"lead": 6.0, "Model": 0.6718, "Persistence": 1.0009, "Climatology": 0.9349, "test months": 135.0, "Skill vs persistence": 0.3288}, {"lead": 7.0, "Model": 0.7275, "Persistence": 1.0968, "Climatology": 0.9301, "test months": 134.0, "Skill vs persistence": 0.3367}, {"lead": 8.0, "Model": 0.7584, "Persistence": 1.1689, "Climatology": 0.9215, "test months": 133.0, "Skill vs persistence": 0.3512}, {"lead": 9.0, "Model": 0.7758, "Persistence": 1.2194, "Climatology": 0.9081, "test months": 132.0, "Skill vs persistence": 0.3638}, {"lead": 10.0, "Model": 0.7801, "Persistence": 1.2482, "Climatology": 0.8896, "test months": 131.0, "Skill vs persistence": 0.375}, {"lead": 11.0, "Model": 0.7753, "Persistence": 1.261, "Climatology": 0.8667, "test months": 130.0, "Skill vs persistence": 0.3852}, {"lead": 12.0, "Model": 0.7669, "Persistence": 1.2618, "Climatology": 0.8397, "test months": 129.0, "Skill vs persistence": 0.3922}], "risk": {"columns": ["La Niña (−1.0)", "Normal (0.0)", "Moderate El Niño (+1.0)", "Strong El Niño (+2.0)", "Forecast peak (+2.8)"], "rows": [["Sri Lanka", 0.25, 0.1, 0.217, 0.217, 0.217], ["South India", 0.15, 0.1, 0.3, 0.283, 0.283], ["SE Asia", 0.017, 0.133, 0.417, 0.75, 0.75], ["East Australia", 0.1, 0.183, 0.367, 0.3, 0.3], ["Southern Africa", 0.1, 0.183, 0.35, 0.45, 0.45], ["East Africa", 0.167, 0.2, 0.3, 0.333, 0.333], ["Peru & Ecuador", 0.2, 0.167, 0.183, 0.317, 0.317], ["Central America", 0.117, 0.167, 0.333, 0.283, 0.283], ["Central Pacific", 0.033, 0.117, 0.517, 0.833, 0.833]]}, "corr": {"columns": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"], "rows": [["Sri Lanka", -0.336, -0.451, -0.414, -0.374, 0.312, -0.108, -0.396, -0.182, 0.192, 0.572, 0.16, 0.164], ["South India", -0.277, -0.365, -0.391, -0.341, 0.081, -0.081, -0.515, -0.402, -0.301, -0.035, 0.254, 0.031], ["SE Asia", -0.531, -0.649, -0.545, -0.642, -0.56, -0.47, -0.551, -0.694, -0.708, -0.825, -0.687, -0.635], ["East Australia", -0.168, -0.272, -0.216, -0.323, -0.056, -0.191, -0.455, -0.415, -0.423, -0.419, -0.517, -0.3], ["Southern Africa", -0.45, -0.487, -0.179, -0.101, -0.251, -0.217, 0.013, 0.224, 0.459, 0.044, -0.404, -0.494], ["East Africa", 0.322, 0.305, -0.154, 0.084, 0.25, -0.024, 0.007, -0.011, 0.075, 0.53, 0.511, 0.451], ["Peru & Ecuador", 0.11, 0.016, 0.146, 0.356, 0.171, -0.043, 0.1, 0.07, -0.013, 0.03, 0.25, 0.253], ["Central America", -0.292, -0.308, 0.093, -0.059, -0.198, -0.181, -0.118, -0.616, -0.377, -0.247, -0.043, -0.324], ["Central Pacific", 0.781, 0.79, 0.649, 0.568, 0.463, 0.575, 0.508, 0.697, 0.815, 0.75, 0.782, 0.761]]}};
+const F = DATA.forecast, R = DATA.rain, K = DATA.skill;
+const NEAR = 20;   // mm: smaller differences count as "about normal"
+
+// ── Words ────────────────────────────────────────────────────────────────────
+const MONTHS = {
+  en: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+  si: ["ජනවාරි", "පෙබරවාරි", "මාර්තු", "අප්‍රේල්", "මැයි", "ජූනි", "ජූලි", "අගෝස්තු", "සැප්තැම්බර්", "ඔක්තෝබර්", "නොවැම්බර්", "දෙසැම්බර්"],
+};
+const REGION_SI = {
+  "Sri Lanka": "ශ්‍රී ලංකාව", "South India": "දකුණු ඉන්දියාව", "SE Asia": "අග්නිදිග ආසියාව",
+  "East Australia": "නැගෙනහිර ඕස්ට්‍රේලියාව", "Southern Africa": "දකුණු අප්‍රිකාව", "East Africa": "නැගෙනහිර අප්‍රිකාව",
+  "Peru & Ecuador": "පේරු සහ ඉක්වදෝරය", "Central America": "මධ්‍යම ඇමරිකාව", "Central Pacific": "මධ්‍යම පැසිෆික්",
+};
+
+const T = {
+  en: {
+    title: "Sri Lanka El Niño Outlook",
+    asof: (m, d) => `Latest data: ${m} · Page made on ${d}`,
+    disclaimer: "This forecast was made by a computer model using real data from NOAA (the US weather and ocean agency). It is <b>not an official forecast</b>. Before making decisions, check the Sri Lanka Department of Meteorology.",
+    sumH: "In short",
+    strength: v => v >= 2 ? "very strong" : v >= 1.5 ? "strong" : v >= 1 ? "moderate" : "weak",
+    nowEl: (s, m, x, r, rm) => `<b>El Niño is happening now, and it is ${s}.</b> In ${m} the central Pacific Ocean was <b>${x} °C warmer than normal</b>. The highest since 1979 is ${r} °C (${rm}).`,
+    nowLa: (m, x) => `<b>La Niña is happening now.</b> In ${m} the central Pacific Ocean was ${x} °C cooler than normal.`,
+    nowNone: (m, x) => `<b>There is no El Niño or La Niña right now.</b> In ${m} the central Pacific Ocean was close to normal (${x} °C).`,
+    peakFade: (p, f) => `It is expected to be <b>strongest around ${p}</b> and to <b>fade by about ${f}</b>.`,
+    peakStay: (p, e) => `It is expected to be <b>strongest around ${p}</b> and to last until at least ${e}.`,
+    wetList: l => `<b>Sri Lanka: more rain than usual</b> in ${l}.`,
+    dryList: l => `<b>Sri Lanka: less rain than usual (drier)</b> in ${l}.`,
+    noneList: "no month",
+    trust: g => `When tested on past years, this forecast's mistakes were <b>about ${g} smaller</b> than just guessing “nothing will change”.`,
+    slH: "What does this mean for Sri Lanka?",
+    slP: "Each card compares the expected rain with a normal month (the 1991–2020 average for that month).",
+    wet: "More rain than usual", dry: "Less rain than usual", normal: "About normal",
+    amtMore: x => `about ${x} mm more`, amtLess: x => `about ${x} mm less`, amtNormal: x => `within ${x} mm of normal`,
+    sure: (lvl, p) => `${lvl} (${p} chance)`,
+    veryLikely: "Very likely", likely: "Likely", unsure: "Uncertain",
+    keyWet: "More rain than usual", keyDry: "Less rain than usual",
+    rainAxis: "mm more / less than usual",
+    tipExpected: x => `Expected: ${x} mm`, tipRange: (a, b) => `Likely range: ${a} to ${b} mm`,
+    tipChance: p => `Chance of more rain than usual: ${p}`,
+    showNumbers: "Show the numbers",
+    rainHead: ["Month", "Expected (mm)", "Likely range (mm)", "Chance of more rain than usual"],
+    whyH: "Why more rain in some months and less in others?",
+    whyP: "El Niño affects Sri Lanka differently in each season. This is what happened to Sri Lanka's rain in past El Niño years (1979 to today):",
+    effMore: "More rain", effLess: "Less rain", effNone: "Little effect",
+    whyNote: "So for Sri Lanka, El Niño does <b>not</b> simply mean drought. It usually brings <b>extra rain around October</b> and <b>drier weather from January to April</b>.",
+    allRegions: "See all regions (for experts)",
+    corrHelp: "Correlation between El Niño strength and rainfall for each month. Blue = more rain during El Niño, red = less. 0 = no link, ±1 = perfect link.",
+    oniH: "What is El Niño doing?",
+    oniP: "The line shows how much warmer (or cooler) than normal the central Pacific Ocean is. Above <b>+0.5 °C</b> means El Niño. The shaded area is the likely range of the forecast.",
+    observed: "Observed", forecast: "Forecast", range: "Likely range",
+    oniAxis: "Warmer than normal (°C)", elLine: "El Niño (+0.5)", laLine: "La Niña (−0.5)",
+    tipRangeC: (a, b) => `Likely range: ${a} to ${b} °C`,
+    oniHead: ["Month", "Forecast (°C)", "Likely range (°C)", "Chance of El Niño", "Chance of La Niña"],
+    worldH: "Which other places are affected?",
+    worldP: p => `Chance of an extreme month (very dry or very wet) when El Niño is as strong as the forecast peak (${p} °C), compared with a normal year.`,
+    times: x => `${x}× the usual chance of an extreme month`,
+    lvlVery: "🔴 Very high", lvlHigh: "🟠 High", lvlNormal: "🟢 Normal",
+    expertTable: "Full table (for experts)",
+    riskHelp: "Share of past months with a 1-in-5 extreme (dry, wet, or both depending on the region) among the 60 months whose El Niño strength was closest to each value. Normal = 0.20.",
+    trustH: "Can we trust this forecast?",
+    trustP: g => `We tested the model on <b>2015 to today</b>, years it never saw while learning. Its mistakes were <b>about ${g} smaller</b> than just guessing “nothing will change”. Forecasts for the <b>next 1–3 months are the most reliable</b>; 6–12 months ahead they are much less certain.`,
+    fact1: "average error, 1 month ahead", fact3: "average error, 3 months ahead", fact12: "average error, 12 months ahead",
+    expertChart: "Accuracy chart (for experts)",
+    model: "Our model", persist: "Guess: “no change”", clim: "Guess: “always normal”",
+    leadAxis: "Months ahead", errAxis: "Average error (°C)", tipLead: n => `${n} month(s) ahead`,
+    skillHead: ["Months ahead", "Our model", "“No change”", "“Always normal”", "Improvement"],
+    glossH: "What do these words mean?",
+    gloss: [
+      ["El Niño", "When the central Pacific Ocean stays warmer than normal for several months. It changes rain and temperature in many countries, including Sri Lanka."],
+      ["La Niña", "The opposite of El Niño: the central Pacific Ocean is cooler than normal."],
+      ["ONI (El Niño strength)", "The official number for El Niño: how many °C warmer than normal the central Pacific is. +0.5 or more means El Niño; −0.5 or less means La Niña."],
+      ["Normal / usual", "The average for that month over the years 1991–2020."],
+      ["Likely range", "We expect the real value to fall inside this range 8 times out of 10."],
+      ["mm of rain", "Depth of rain in millimetres over a month. “+50 mm” means 50 mm more rain than a normal month."],
+    ],
+    sources: "<b>Data:</b> El Niño index, pressure and cloud data from the NOAA Climate Prediction Center · Ocean temperature from NOAA ERSST v5 · Rainfall from GPCP v2.3 (NOAA).",
+    limits: "<b>Limits:</b> the model is simple. The rainfall data is coarse (about 2 points cover Sri Lanka), so it shows the whole island, not districts. Only a few strong El Niños have happened since 1979.",
+  },
+  si: {
+    title: "ශ්‍රී ලංකාවේ El Niño අනාවැකිය",
+    asof: (m, d) => `නවතම දත්ත: ${m} · පිටුව සකස් කළේ ${d}`,
+    disclaimer: "මෙම අනාවැකිය NOAA (ඇමරිකානු කාලගුණ හා සාගර ආයතනය) හි සැබෑ දත්ත භාවිතයෙන් පරිගණක model එකක් මගින් සකස් කළ එකකි. මෙය <b>නිල අනාවැකියක් නොවේ</b>. තීරණ ගැනීමට පෙර කාලගුණ විද්‍යා දෙපාර්තමේන්තුවේ අනාවැකි බලන්න.",
+    sumH: "කෙටියෙන්",
+    strength: v => v >= 2 ? "ඉතා ප්‍රබලයි" : v >= 1.5 ? "ප්‍රබලයි" : v >= 1 ? "මධ්‍යම මට්ටමේ" : "දුර්වලයි",
+    nowEl: (s, m, x, r, rm) => `<b>දැන් El Niño තත්ත්වයක් පවතිනවා, එය ${s}.</b> ${m} මාසයේ මධ්‍යම පැසිෆික් සාගරය <b>සාමාන්‍යයට වඩා ${x} °C කින් උණුසුම්</b> වුණා. 1979 සිට ඉහළම අගය ${r} °C (${rm}).`,
+    nowLa: (m, x) => `<b>දැන් La Niña තත්ත්වයක් පවතිනවා.</b> ${m} මාසයේ මධ්‍යම පැසිෆික් සාගරය සාමාන්‍යයට වඩා ${x} °C කින් සීතලයි.`,
+    nowNone: (m, x) => `<b>දැන් El Niño හෝ La Niña තත්ත්වයක් නැහැ.</b> ${m} මාසයේ මධ්‍යම පැසිෆික් සාගරය සාමාන්‍ය මට්ටමේ (${x} °C).`,
+    peakFade: (p, f) => `එය <b>${p} පමණ වෙද්දී උපරිමයට</b> පැමිණ, <b>${f} පමණ වෙද්දී අඩු වී යයි</b> කියා අපේක්ෂා කෙරෙනවා.`,
+    peakStay: (p, e) => `එය <b>${p} පමණ වෙද්දී උපරිමයට</b> පැමිණ, අවම වශයෙන් ${e} දක්වා පවතිනු ඇතැයි අපේක්ෂා කෙරෙනවා.`,
+    wetList: l => `<b>ශ්‍රී ලංකාවට සාමාන්‍යයට වඩා වැසි වැඩි</b> මාස: ${l}.`,
+    dryList: l => `<b>ශ්‍රී ලංකාවට සාමාන්‍යයට වඩා වැසි අඩු (වියළි)</b> මාස: ${l}.`,
+    noneList: "කිසිම මාසයක් නැහැ",
+    trust: g => `පසුගිය වසරවල දත්ත මත පරීක්ෂා කළ විට, “කිසිවක් වෙනස් නොවේ” යන සරල අනුමානයට වඩා මෙම අනාවැකියේ වැරදි <b>${g} කින් පමණ අඩුයි</b>.`,
+    slH: "ශ්‍රී ලංකාවට මෙයින් කුමක් වේද?",
+    slP: "සෑම කාඩ්පතක්ම, බලාපොරොත්තු වන වැසි ප්‍රමාණය සාමාන්‍ය මාසයක (එම මාසයේ 1991–2020 සාමාන්‍යය) වැසි සමඟ සසඳයි.",
+    wet: "සාමාන්‍යයට වඩා වැසි වැඩියි", dry: "සාමාන්‍යයට වඩා වැසි අඩුයි", normal: "සාමාන්‍ය මට්ටමේ",
+    amtMore: x => `මි.මී. ${x} කින් පමණ වැඩියි`, amtLess: x => `මි.මී. ${x} කින් පමණ අඩුයි`, amtNormal: x => `සාමාන්‍යයට මි.මී. ${x} ක් ඇතුළත`,
+    sure: (lvl, p) => `${lvl} (සම්භාවිතාව ${p})`,
+    veryLikely: "ඉතා ඉඩ ඇත", likely: "ඉඩ ඇත", unsure: "අවිනිශ්චිතයි",
+    keyWet: "සාමාන්‍යයට වඩා වැසි වැඩියි", keyDry: "සාමාන්‍යයට වඩා වැසි අඩුයි",
+    rainAxis: "සාමාන්‍යයට වඩා වෙනස (මි.මී.)",
+    tipExpected: x => `බලාපොරොත්තු වන වෙනස: මි.මී. ${x}`, tipRange: (a, b) => `විය හැකි පරාසය: මි.මී. ${a} සිට ${b} දක්වා`,
+    tipChance: p => `සාමාන්‍යයට වඩා වැසි වැඩිවීමේ සම්භාවිතාව: ${p}`,
+    showNumbers: "සංඛ්‍යා පෙන්වන්න",
+    rainHead: ["මාසය", "බලාපොරොත්තු වන වෙනස (මි.මී.)", "විය හැකි පරාසය (මි.මී.)", "වැසි වැඩිවීමේ සම්භාවිතාව"],
+    whyH: "සමහර මාසවල වැසි වැඩි වී, තවත් මාසවල අඩු වන්නේ ඇයි?",
+    whyP: "El Niño ශ්‍රී ලංකාවට බලපාන්නේ සෘතුව අනුව වෙනස් ආකාරයටයි. 1979 සිට අද දක්වා El Niño වසරවලදී ශ්‍රී ලංකාවේ වැසි වලට සිදු වූ දේ මෙයයි:",
+    effMore: "වැසි වැඩියි", effLess: "වැසි අඩුයි", effNone: "සුළු බලපෑමක්",
+    whyNote: "ඒ නිසා ශ්‍රී ලංකාවට El Niño යනු නියඟය පමණක් <b>නොවේ</b>. සාමාන්‍යයෙන් එය <b>ඔක්තෝබර් අවට වැඩි වැසි</b> ද, <b>ජනවාරි සිට අප්‍රේල් දක්වා වියළි කාලගුණය</b> ද ගෙන එනවා.",
+    allRegions: "සියලුම ප්‍රදේශ බලන්න (විශේෂඥයින් සඳහා)",
+    corrHelp: "එක් එක් මාසය සඳහා El Niño ප්‍රබලතාව සහ වැසි අතර සහසම්බන්ධය. නිල් = El Niño කාලයේ වැසි වැඩියි, රතු = අඩුයි. 0 = සම්බන්ධයක් නැහැ, ±1 = පූර්ණ සම්බන්ධය.",
+    oniH: "El Niño දැන් කුමක් කරයිද?",
+    oniP: "මෙම රේඛාවෙන් පෙන්වන්නේ මධ්‍යම පැසිෆික් සාගරය සාමාන්‍යයට වඩා කොපමණ උණුසුම් (හෝ සීතල) ද යන්නයි. <b>+0.5 °C</b> ට වැඩි නම් El Niño තත්ත්වයකි. අඳුරු කළ ප්‍රදේශය අනාවැකියේ විය හැකි පරාසයයි.",
+    observed: "නිරීක්ෂිත", forecast: "අනාවැකිය", range: "විය හැකි පරාසය",
+    oniAxis: "සාමාන්‍යයට වඩා උණුසුම (°C)", elLine: "El Niño (+0.5)", laLine: "La Niña (−0.5)",
+    tipRangeC: (a, b) => `විය හැකි පරාසය: ${a} සිට ${b} °C දක්වා`,
+    oniHead: ["මාසය", "අනාවැකිය (°C)", "විය හැකි පරාසය (°C)", "El Niño සම්භාවිතාව", "La Niña සම්භාවිතාව"],
+    worldH: "වෙනත් කුමන ප්‍රදේශවලට බලපායිද?",
+    worldP: p => `El Niño අනාවැකියේ උපරිමය (${p} °C) තරම් ප්‍රබල වූ විට, සාමාන්‍ය වසරකට සාපේක්ෂව අන්ත (ඉතා වියළි හෝ ඉතා තෙත්) මාසයක් ඇතිවීමේ සම්භාවිතාව.`,
+    times: x => `අන්ත මාසයක් ඇතිවීමේ සම්භාවිතාව සාමාන්‍යය මෙන් ${x} ගුණයක්`,
+    lvlVery: "🔴 ඉතා ඉහළ", lvlHigh: "🟠 ඉහළ", lvlNormal: "🟢 සාමාන්‍ය",
+    expertTable: "සම්පූර්ණ වගුව (විශේෂඥයින් සඳහා)",
+    riskHelp: "එක් එක් අගයට El Niño ප්‍රබලතාව ආසන්නම වූ පසුගිය මාස 60 අතරින්, වසර 5 කට වරක් පමණ ඇතිවන අන්ත මාස (ප්‍රදේශය අනුව වියළි, තෙත් හෝ දෙකම) වූ ප්‍රතිශතය. සාමාන්‍යය = 0.20.",
+    trustH: "මෙම අනාවැකිය විශ්වාස කළ හැකිද?",
+    trustP: g => `ඉගෙනීමේදී කිසිදා නොදුටු <b>2015 සිට අද දක්වා</b> දත්ත මත මෙම model එක පරීක්ෂා කළා. “කිසිවක් වෙනස් නොවේ” යන අනුමානයට වඩා එහි වැරදි <b>${g} කින් පමණ අඩුයි</b>. <b>ඉදිරි මාස 1–3</b> සඳහා අනාවැකි වඩාත්ම විශ්වාසදායකයි; මාස 6–12 සඳහා අවිනිශ්චිතතාව බොහෝ වැඩියි.`,
+    fact1: "සාමාන්‍ය වැරැද්ද, මාසයක් ඉදිරියට", fact3: "සාමාන්‍ය වැරැද්ද, මාස 3ක් ඉදිරියට", fact12: "සාමාන්‍ය වැරැද්ද, මාස 12ක් ඉදිරියට",
+    expertChart: "නිරවද්‍යතා ප්‍රස්තාරය (විශේෂඥයින් සඳහා)",
+    model: "අපේ model එක", persist: "අනුමානය: “වෙනසක් නැහැ”", clim: "අනුමානය: “සෑම විටම සාමාන්‍යයි”",
+    leadAxis: "ඉදිරි මාස", errAxis: "සාමාන්‍ය වැරැද්ද (°C)", tipLead: n => `මාස ${n} ක් ඉදිරියට`,
+    skillHead: ["ඉදිරි මාස", "අපේ model එක", "“වෙනසක් නැහැ”", "“සෑම විටම සාමාන්‍යයි”", "දියුණුව"],
+    glossH: "වචනවල තේරුම",
+    gloss: [
+      ["El Niño (එල් නීනෝ)", "මධ්‍යම පැසිෆික් සාගරය මාස කිහිපයක් පුරා සාමාන්‍යයට වඩා උණුසුම්ව පවතින තත්ත්වය. එය ශ්‍රී ලංකාව ඇතුළු රටවල් රැසක වැසි හා උෂ්ණත්වය වෙනස් කරනවා."],
+      ["La Niña (ලා නීනා)", "El Niño හි ප්‍රතිවිරුද්ධය: මධ්‍යම පැසිෆික් සාගරය සාමාන්‍යයට වඩා සීතල වන තත්ත්වය."],
+      ["ONI (El Niño ප්‍රබලතාව)", "El Niño මනින නිල අංකය: මධ්‍යම පැසිෆික් සාගරය සාමාන්‍යයට වඩා කොපමණ °C ප්‍රමාණයකින් උණුසුම් ද යන්න. +0.5 හෝ වැඩි නම් El Niño; −0.5 හෝ අඩු නම් La Niña."],
+      ["සාමාන්‍ය", "1991–2020 වසර තුළ එම මාසයේ සාමාන්‍ය අගය."],
+      ["විය හැකි පරාසය", "සැබෑ අගය මෙම පරාසය තුළ වැටෙනු ඇතැයි 10 න් 8 වතාවක් අපේක්ෂා කෙරෙනවා."],
+      ["මි.මී. (වැසි)", "මාසයක් තුළ ලැබෙන වැසි ප්‍රමාණය මිලිමීටර වලින්. “+50 මි.මී.” යනු සාමාන්‍ය මාසයකට වඩා මි.මී. 50 ක් වැඩි වැසි බවයි."],
+    ],
+    sources: "<b>දත්ත:</b> El Niño දර්ශකය, වායු පීඩන හා වලාකුළු දත්ත NOAA Climate Prediction Center වෙතින් · සාගර උෂ්ණත්වය NOAA ERSST v5 වෙතින් · වැසි දත්ත GPCP v2.3 (NOAA) වෙතින්.",
+    limits: "<b>සීමා:</b> මෙම model එක සරලයි. වැසි දත්ත විශාල කොටු වලින් (ශ්‍රී ලංකාව ආවරණය වන්නේ ලක්ෂ 2 කින් පමණ) සමන්විත නිසා, මෙයින් පෙන්වන්නේ මුළු දිවයිනේම තත්ත්වයයි, දිස්ත්‍රික්ක අනුව නොවේ. 1979 සිට ප්‍රබල El Niño ඇති වී ඇත්තේ කිහිප වතාවක් පමණයි.",
+  },
+};
+
+// ── Helpers ─────────────────────────────────────────────────────────────────
+let lang = "en";
+try { lang = new URLSearchParams(location.search).get("lang") || localStorage.getItem("lang") || "en"; } catch (e) {}
+if (!T[lang]) lang = "en";
+const t = k => T[lang][k];
+
+const css = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+const ym = iso => { const [y, m] = iso.split("-").map(Number); return { y, m }; };
+const monthName = (iso, short) => { const { y, m } = ym(iso); const n = MONTHS[lang][m - 1];
+  return (short && lang === "en" ? n.slice(0, 3) : n) + " " + y; };
+const signed = (v, d = 2) => { const s = Math.abs(v).toFixed(d); return (Number(s) === 0 ? "" : v > 0 ? "+" : "−") + s; };
+const pct = v => Math.round(v * 100) + "%";
+const region = n => (lang === "si" ? REGION_SI[n] || n : n);
+
+function monthRanges(rows) {   // consecutive months → "Oct 2026 – Dec 2026"
+  const out = [];
+  rows.forEach(r => {
+    const { y, m } = ym(r.month), idx = y * 12 + m, last = out[out.length - 1];
+    if (last && last.end === idx - 1) { last.end = idx; last.to = r.month; } else out.push({ end: idx, from: r.month, to: r.month });
+  });
+  if (!out.length) return t("noneList");
+  return out.map(g => g.from === g.to ? monthName(g.from) : monthName(g.from) + " – " + monthName(g.to)).join(", ");
+}
+
+const hex2rgb = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+const mix = (a, b, x) => { const A = hex2rgb(a), B = hex2rgb(b);
+  return "rgb(" + A.map((v, i) => Math.round(v + (B[i] - v) * x)).join(",") + ")"; };
+const inkOn = rgb => { const L = rgb.match(/\d+/g).map(Number).map(c => { c /= 255; return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; });
+  return 0.2126 * L[0] + 0.7152 * L[1] + 0.0722 * L[2] > 0.3 ? "#0b0b0b" : "#ffffff"; };
+
+function table(el, head, rows) {
+  el.innerHTML = "<thead><tr>" + head.map(h => `<th>${h}</th>`).join("") + "</tr></thead><tbody>" +
+    rows.map(r => "<tr>" + r.map(c => `<td>${c}</td>`).join("") + "</tr>").join("") + "</tbody>";
+}
+function heatTable(el, matrix, colour, fmt) {
+  el.innerHTML = "<thead><tr><th></th>" + matrix.columns.map(c => `<th>${c}</th>`).join("") + "</tr></thead><tbody>" +
+    matrix.rows.map(([name, ...vals]) => `<tr><td>${region(name)}</td>` + vals.map(v => {
+      const bg = colour(v); return `<td style="background:${bg};color:${inkOn(bg)}">${fmt(v)}</td>`;
+    }).join("") + "</tr>").join("") + "</tbody>";
+}
+const $ = id => document.getElementById(id);
+
+// ── Page text ───────────────────────────────────────────────────────────────
+function renderText() {
+  document.documentElement.lang = lang;
+  document.querySelectorAll("[data-t]").forEach(el => { el.innerHTML = t(el.dataset.t); });
+  document.querySelectorAll("[data-lang]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
+  $("asof").textContent = t("asof")(monthName(DATA.last_month), DATA.generated);
+
+  // Summary
+  const now = DATA.last_oni, lastM = monthName(DATA.last_month);
+  const peak = F.reduce((a, b) => (b.oni_mean > a.oni_mean ? b : a));
+  const fade = F.find(r => r.month > peak.month && r.oni_mean < 0.5);
+  const gain = pct(K.reduce((s, r) => s + r["Skill vs persistence"], 0) / K.length);
+  const items = [];
+  if (now >= 0.5) items.push(["🌊", t("nowEl")(t("strength")(now), lastM, signed(now), signed(DATA.record.oni), monthName(DATA.record.month))]);
+  else if (now <= -0.5) items.push(["🌊", t("nowLa")(lastM, Math.abs(now).toFixed(2))]);
+  else items.push(["🌊", t("nowNone")(lastM, signed(now))]);
+  if (peak.oni_mean >= 0.5) items.push(["📈", fade ? t("peakFade")(monthName(peak.month), monthName(fade.month))
+                                                    : t("peakStay")(monthName(peak.month), monthName(F[F.length - 1].month))]);
+  items.push(["🌧️", t("wetList")(monthRanges(R.filter(r => r.rain_anomaly_mm >= NEAR)))]);
+  items.push(["☀️", t("dryList")(monthRanges(R.filter(r => r.rain_anomaly_mm <= -NEAR)))]);
+  items.push(["✅", t("trust")(gain)]);
+  $("summary").innerHTML = items.map(([i, s]) => `<li><span class="ic" aria-hidden="true">${i}</span><span>${s}</span></li>`).join("");
+
+  // Month cards
+  $("months").innerHTML = R.map(r => {
+    const v = r.rain_anomaly_mm, kind = v >= NEAR ? "wet" : v <= -NEAR ? "dry" : "normal";
+    const chance = kind === "dry" ? 1 - r.chance_wetter_than_normal : r.chance_wetter_than_normal;
+    const lvl = kind === "normal" ? t("unsure") : chance >= 0.8 ? t("veryLikely") : chance >= 0.6 ? t("likely") : t("unsure");
+    const amount = kind === "wet" ? t("amtMore")(Math.round(v)) : kind === "dry" ? t("amtLess")(Math.round(-v)) : t("amtNormal")(NEAR);
+    const icon = { wet: "🌧️", dry: "☀️", normal: "⛅" }[kind];
+    return `<div class="month ${kind}"><div class="name">${monthName(r.month)}</div>
+      <div class="big" aria-hidden="true">${icon}</div><div class="verdict">${t(kind)}</div>
+      <div class="amount">${amount}</div><div class="sure">${t("sure")(lvl, pct(chance))}</div></div>`;
+  }).join("");
+
+  table($("rainTable"), t("rainHead"), R.map(r => [monthName(r.month), signed(r.rain_anomaly_mm, 0),
+    signed(r.p10_mm, 0) + " … " + signed(r.p90_mm, 0), pct(r.chance_wetter_than_normal)]));
+
+  // Season effect for Sri Lanka
+  const sl = DATA.corr.rows.find(r => r[0] === "Sri Lanka").slice(1);
+  $("effects").innerHTML = sl.map((c, i) => {
+    const [e, w] = c >= 0.2 ? ["🌧️", t("effMore")] : c <= -0.2 ? ["☀️", t("effLess")] : ["➖", t("effNone")];
+    return `<div class="effect"><div class="e" aria-hidden="true">${e}</div><div class="m">${MONTHS[lang][i]}</div><div class="w">${w}</div></div>`;
+  }).join("");
+
+  // Other regions
+  const peakCol = DATA.risk.rows.map(r => [r[0], r[r.length - 1]]).sort((a, b) => b[1] - a[1]);
+  $("worldP").textContent = t("worldP")(signed(peak.oni_mean, 1));
+  $("regions").innerHTML = peakCol.map(([n, v]) => {
+    const lvl = v >= 0.5 ? t("lvlVery") : v >= 0.35 ? t("lvlHigh") : t("lvlNormal");
+    return `<li><span>${region(n)}</span><span class="lvl">${lvl}</span><span class="times">${t("times")((v / 0.2).toFixed(1))}</span></li>`;
+  }).join("");
+
+  // Trust
+  $("trustP").innerHTML = t("trustP")(gain);
+  $("facts").innerHTML = [[1, "fact1"], [3, "fact3"], [12, "fact12"]].map(([lead, k]) =>
+    `<div class="fact"><div class="v">± ${K.find(r => r.lead === lead).Model.toFixed(2)} °C</div><div class="l">${t(k)}</div></div>`).join("");
+
+  table($("oniTable"), t("oniHead"), F.map(r => [monthName(r.month), signed(r.oni_mean),
+    signed(r.oni_p10) + " … " + signed(r.oni_p90), pct(r.p_el_nino), pct(r.p_la_nina)]));
+  table($("skillTable"), t("skillHead"), K.map(r => [r.lead, r.Model.toFixed(2), r.Persistence.toFixed(2),
+    r.Climatology.toFixed(2), pct(r["Skill vs persistence"])]));
+
+  $("gloss").innerHTML = t("gloss").map(([w, d]) => `<dt>${w}</dt><dd>${d}</dd>`).join("");
+
+  const neg = css("--div-neg"), mid = css("--div-mid"), pos = css("--div-pos");
+  const corr = { ...DATA.corr, columns: MONTHS[lang].map(m => (lang === "en" ? m.slice(0, 3) : m)) };
+  heatTable($("corrTable"), corr, v => v < 0 ? mix(mid, neg, Math.min(1, -v / 0.8)) : mix(mid, pos, Math.min(1, v / 0.8)), v => signed(v, 1));
+  heatTable($("riskTable"), DATA.risk, v => mix(css("--seq-lo"), css("--seq-hi"), Math.min(1, v / 0.8)), v => v.toFixed(2));
+}
+
+// ── Charts ──────────────────────────────────────────────────────────────────
+let charts = [];
+const thresholdLines = {
+  id: "thresholds",
+  afterDatasetsDraw(chart) {
+    const { ctx, chartArea: a, scales: { y } } = chart;
+    ctx.save(); ctx.strokeStyle = css("--axis"); ctx.fillStyle = css("--muted"); ctx.lineWidth = 1;
+    ctx.font = "12px system-ui, 'Noto Sans Sinhala', sans-serif";
+    [[0.5, t("elLine")], [-0.5, t("laLine")]].forEach(([v, s]) => {
+      const py = y.getPixelForValue(v); if (py < a.top || py > a.bottom) return;
+      ctx.beginPath(); ctx.moveTo(a.left, py); ctx.lineTo(a.right, py); ctx.stroke(); ctx.fillText(s, a.left + 6, py - 4);
+    });
+    ctx.restore();
+  },
+};
+function baseOptions(yTitle) {
+  const muted = css("--muted"), ink = css("--ink");
+  return {
+    responsive: true, maintainAspectRatio: false, animation: false,
+    interaction: { mode: "index", intersect: false },
+    scales: {
+      x: { grid: { display: false }, border: { color: css("--axis") }, ticks: { color: muted, maxRotation: 0, autoSkipPadding: 12 } },
+      y: { grid: { color: css("--grid") }, border: { display: false }, ticks: { color: muted }, title: { display: true, text: yTitle, color: muted } },
+    },
+    plugins: {
+      legend: { labels: { color: ink, boxWidth: 16, boxHeight: 8 } },
+      tooltip: { backgroundColor: css("--surface"), titleColor: ink, bodyColor: ink, borderColor: css("--axis"), borderWidth: 1, padding: 10 },
+    },
+  };
+}
+function drawCharts() {
+  charts.forEach(c => c.destroy()); charts = [];
+  Chart.defaults.font.family = "system-ui, -apple-system, 'Segoe UI', 'Noto Sans Sinhala', sans-serif";
+  const s1 = css("--s1"), s2 = css("--s2"), s3 = css("--s3");
+
+  const rainOpts = baseOptions(t("rainAxis"));
+  rainOpts.plugins.legend.display = false;
+  rainOpts.plugins.tooltip.callbacks = {
+    label: i => " " + t("tipExpected")(signed(i.raw, 0)),
+    afterLabel: i => { const r = R[i.dataIndex];
+      return " " + t("tipRange")(signed(r.p10_mm, 0), signed(r.p90_mm, 0)) + "\n " + t("tipChance")(pct(r.chance_wetter_than_normal)); },
+  };
+  $("rainChart").setAttribute("aria-label", t("slH"));
+  charts.push(new Chart($("rainChart"), {
+    type: "bar",
+    data: { labels: R.map(r => monthName(r.month, true)), datasets: [{ data: R.map(r => r.rain_anomaly_mm),
+      backgroundColor: R.map(r => (r.rain_anomaly_mm >= 0 ? css("--wet") : css("--dry"))),
+      borderRadius: 4, borderSkipped: "start", maxBarThickness: 24 }] },
+    options: rainOpts,
+  }));
+
+  const H = DATA.history, nH = H.length, pad = n => Array(n).fill(null);
+  const oniOpts = baseOptions(t("oniAxis"));
+  oniOpts.plugins.legend.labels.filter = item => item.text !== "_p10";
+  oniOpts.plugins.tooltip.filter = item => item.raw !== null && item.dataset.label !== "_p10";
+  oniOpts.plugins.tooltip.callbacks = {
+    label: i => i.dataset.label === t("range") ? " " + t("tipRangeC")(signed(F[i.dataIndex - nH].oni_p10), signed(i.raw))
+                                                 : ` ${i.dataset.label}: ${signed(i.raw)} °C`,
+  };
+  const line = (label, data, color) => ({ label, data, borderColor: color, backgroundColor: color,
+    borderWidth: 2, pointRadius: 0, pointHoverRadius: 5, tension: 0.25 });
+  $("oniChart").setAttribute("aria-label", t("oniH"));
+  charts.push(new Chart($("oniChart"), {
+    type: "line",
+    data: { labels: H.map(r => monthName(r.month, true)).concat(F.map(r => monthName(r.month, true))), datasets: [
+      line(t("observed"), H.map(r => r.oni).concat(pad(F.length)), s1),
+      line(t("forecast"), pad(nH - 1).concat([H[nH - 1].oni], F.map(r => r.oni_mean)), s2),
+      { label: "_p10", data: pad(nH).concat(F.map(r => r.oni_p10)), borderWidth: 0, pointRadius: 0, fill: false },
+      { label: t("range"), data: pad(nH).concat(F.map(r => r.oni_p90)), borderWidth: 0, pointRadius: 0,
+        fill: "-1", backgroundColor: s2 + "26", borderColor: s2 + "26" },
+    ] },
+    options: oniOpts, plugins: [thresholdLines],
+  }));
+
+  const skillOpts = baseOptions(t("errAxis"));
+  skillOpts.scales.x.title = { display: true, text: t("leadAxis"), color: css("--muted") };
+  skillOpts.plugins.tooltip.callbacks = { title: i => t("tipLead")(i[0].label), label: i => ` ${i.dataset.label}: ${i.raw.toFixed(2)} °C` };
+  const sline = (label, key, color) => ({ ...line(label, K.map(r => r[key]), color), pointRadius: 4, pointBorderColor: css("--surface"), pointBorderWidth: 2 });
+  $("skillChart").setAttribute("aria-label", t("trustH"));
+  charts.push(new Chart($("skillChart"), {
+    type: "line",
+    data: { labels: K.map(r => r.lead), datasets: [sline(t("model"), "Model", s1), sline(t("persist"), "Persistence", s2), sline(t("clim"), "Climatology", s3)] },
+    options: skillOpts,
+  }));
+}
+
+function render() { renderText(); if (window.Chart) drawCharts(); }
+document.querySelectorAll("[data-lang]").forEach(b => b.addEventListener("click", () => {
+  lang = b.dataset.lang; try { localStorage.setItem("lang", lang); } catch (e) {}
+  render();
+}));
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", render);
+render();
+</script>
+</body>
+</html>
