@@ -7,7 +7,7 @@ A single Jupyter notebook that downloads **real NOAA climate data**, forecasts t
 <!-- results:start -->
 ## Results
 
-*Data through **Sep 2026**. Updated 2026-11-12. This is a machine-learning forecast, not an
+*Data through **Sep 2026**. Updated 2026-11-13. This is a machine-learning forecast, not an
 official one. Check NOAA CPC, IRI or the Sri Lanka Department of Meteorology before acting on it.*
 
 ### In short
@@ -40,6 +40,28 @@ official one. Check NOAA CPC, IRI or the Sri Lanka Department of Meteorology bef
 | Jul 2027 | ➖ near normal | −3 mm | −52 to +48 mm | 46% |
 | Aug 2027 | ➖ near normal | +4 mm | −34 to +42 mm | 55% |
 | Sep 2027 | ➖ near normal | +8 mm | −57 to +73 mm | 57% |
+
+### Town by town (5 km CHIRPS rainfall)
+
+![Sri Lanka 5 km map: chance of a wetter-than-normal month](images/7_sri_lanka_map.png)
+
+Green means a wetter-than-normal month is likely, and brown means drier. The table shows the expected
+difference from normal rainfall in mm per month.
+
+| Town | Oct 26 | Nov 26 | Dec 26 | Jan 27 | Feb 27 | Mar 27 | Apr 27 | May 27 | Jun 27 | Jul 27 | Aug 27 | Sep 27 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| Jaffna | +26 | +62 | −26 | −55 | −45 | −44 | −52 | +56 | −1 | −2 | −3 | +1 |
+| Trincomalee | +64 | +107 | +51 | −62 | −105 | −46 | −46 | +40 | −2 | +3 | −5 | 0 |
+| Anuradhapura | +110 | +46 | +8 | −63 | −59 | −55 | −56 | +82 | −1 | −2 | −3 | −3 |
+| Batticaloa | +74 | +69 | +189 | −161 | −147 | −50 | −41 | +9 | −1 | −3 | −1 | +6 |
+| Kurunegala | +178 | +99 | +47 | −62 | −73 | −78 | −75 | +79 | −6 | −4 | −3 | −2 |
+| Kandy | +151 | +74 | +67 | −101 | −82 | −68 | −64 | +52 | −17 | −4 | +2 | +1 |
+| Colombo | +117 | +84 | +36 | −50 | −69 | −79 | −118 | +18 | −4 | −7 | −6 | −7 |
+| Badulla | +168 | +35 | +102 | −100 | −109 | −81 | −77 | +33 | −4 | +1 | 0 | −2 |
+| Nuwara Eliya | +125 | +29 | +57 | −58 | −71 | −60 | −58 | +19 | −23 | −2 | −1 | −2 |
+| Ratnapura | +238 | +82 | +55 | −56 | −103 | −110 | −110 | +18 | −19 | +2 | −14 | +3 |
+| Hambantota | +125 | +76 | +42 | −34 | −44 | −63 | −35 | +30 | −6 | −1 | +1 | −4 |
+| Galle | +183 | +75 | +44 | −48 | −67 | −63 | −132 | +13 | −22 | +3 | −3 | −19 |
 
 ### El Niño forecast
 
@@ -95,6 +117,9 @@ Lower error is better. The model (blue) beats both simple guesses at every lead 
 
 The first run downloads ~180 MB of data into `real_data/`.
 
+The 5 km step reads `data/chirps_sri_lanka.nc`. On Colab the notebook fetches it from this GitHub
+repository. If the repository is private, upload that file into a `data/` folder in Colab first.
+
 Running it locally works too: `pip install numpy pandas xarray netCDF4 scipy scikit-learn matplotlib jupyter`.
 
 ## Results page
@@ -117,6 +142,7 @@ python3 make_site.py            # or: python3 make_site.py path/to/results.zip
 | Ridge-regression ONI forecast for leads 1–12 months, tested on 2015 → today against persistence and climatology | `3_forecast_skill.png`, `forecast_skill.csv` |
 | 12-month ONI forecast with 10–90 % range and El Niño / La Niña probability | `4_oni_forecast.png`, `oni_forecast.csv` |
 | Sri Lanka rainfall outlook (per-month ONI → rain relationship, Monte Carlo uncertainty) | `5_sri_lanka_rain_outlook.png`, `sri_lanka_rain_outlook.csv` |
+| The same outlook on a 5 km grid and for 12 towns (CHIRPS) | `7_sri_lanka_map.png`, `sri_lanka_towns_rain_mm.csv`, `sri_lanka_towns_chance_wetter.csv` |
 | Chance of an extreme rain/drought month per region and ENSO state | `6_regional_risk.png`, `regional_risk.csv` |
 
 ## Key finding
@@ -132,9 +158,13 @@ All data are free and public, from NOAA:
 - **ONI, SOI, OLR** — NOAA Climate Prediction Center, <https://www.cpc.ncep.noaa.gov/data/indices/>
 - **ERSST v5** sea-surface temperature — Huang et al. (2017), NOAA PSL
 - **GPCP v2.3** monthly precipitation — Adler et al. (2018), NOAA PSL
+- **CHIRPS v3.0** monthly precipitation, 0.05° — Climate Hazards Center, UC Santa Barbara.
+  The Sri Lanka part (1981–2025) is stored in `data/chirps_sri_lanka.nc` (4.7 MB).
 
 ## Limitations
 
 - The ONI model is linear and simple. Compare with official forecasts (NOAA CPC, IRI, ECMWF) before relying on it.
-- GPCP's 2.5° grid gives only ~2 grid cells over Sri Lanka: island-wide signal, not district detail.
+- GPCP's 2.5° grid gives only ~2 grid cells over Sri Lanka. The 5 km CHIRPS map and town table add
+  local detail, but each pixel's fit uses only ~43 values per month: read them for patterns, not exact amounts.
+- `data/chirps_sri_lanka.nc` has no 1987 and 2003: the CHIRPS server blocked the download.
 - Only a handful of strong El Niño events exist since 1979, so strong-event estimates are uncertain.
