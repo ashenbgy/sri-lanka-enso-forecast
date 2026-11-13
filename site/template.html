@@ -136,6 +136,13 @@ footer { margin-top: 28px; color: var(--ink-2); font-size: 0.9rem; }
   </section>
 
   <section class="card">
+    <h2 data-t="townH"></h2>
+    <p class="sub" data-t="townP"></p>
+    <div class="scroll"><table class="heat" id="townTable"></table></div>
+    <p class="small" data-t="townNote"></p>
+  </section>
+
+  <section class="card">
     <h2 data-t="whyH"></h2>
     <p class="sub" data-t="whyP"></p>
     <div class="effects" id="effects"></div>
@@ -196,6 +203,9 @@ const REGION_SI = {
   "Sri Lanka": "ශ්‍රී ලංකාව", "South India": "දකුණු ඉන්දියාව", "SE Asia": "අග්නිදිග ආසියාව",
   "East Australia": "නැගෙනහිර ඕස්ට්‍රේලියාව", "Southern Africa": "දකුණු අප්‍රිකාව", "East Africa": "නැගෙනහිර අප්‍රිකාව",
   "Peru & Ecuador": "පේරු සහ ඉක්වදෝරය", "Central America": "මධ්‍යම ඇමරිකාව", "Central Pacific": "මධ්‍යම පැසිෆික්",
+  "Jaffna": "යාපනය", "Trincomalee": "ත්‍රිකුණාමලය", "Anuradhapura": "අනුරාධපුරය", "Batticaloa": "මඩකලපුව",
+  "Kurunegala": "කුරුණෑගල", "Kandy": "මහනුවර", "Colombo": "කොළඹ", "Badulla": "බදුල්ල",
+  "Nuwara Eliya": "නුවරඑළිය", "Ratnapura": "රත්නපුර", "Hambantota": "හම්බන්තොට", "Galle": "ගාල්ල",
 };
 
 const T = {
@@ -226,6 +236,9 @@ const T = {
     tipChance: p => `Chance of more rain than usual: ${p}`,
     showNumbers: "Show the numbers",
     rainHead: ["Month", "Expected (mm)", "Likely range (mm)", "Chance of more rain than usual"],
+    townH: "Town by town",
+    townP: "Expected rain compared with a normal month, in mm. <b>Blue</b> = more rain than usual is likely, <b>red</b> = less rain is likely. Darker = more certain.",
+    townNote: "Each town is the average of the area about 20 km around it, from 5 km satellite and rain-gauge data (CHIRPS). Rain varies a lot over short distances, so use this for the general pattern, not exact amounts.",
     whyH: "Why more rain in some months and less in others?",
     whyP: "El Niño affects Sri Lanka differently in each season. This is what happened to Sri Lanka's rain in past El Niño years (1979 to today):",
     effMore: "More rain", effLess: "Less rain", effNone: "Little effect",
@@ -260,8 +273,8 @@ const T = {
       ["Likely range", "We expect the real value to fall inside this range 8 times out of 10."],
       ["mm of rain", "Depth of rain in millimetres over a month. “+50 mm” means 50 mm more rain than a normal month."],
     ],
-    sources: "<b>Data:</b> El Niño index, pressure and cloud data from the NOAA Climate Prediction Center · Ocean temperature from NOAA ERSST v5 · Rainfall from GPCP v2.3 (NOAA).",
-    limits: "<b>Limits:</b> the model is simple. The rainfall data is coarse (about 2 points cover Sri Lanka), so it shows the whole island, not districts. Only a few strong El Niños have happened since 1979.",
+    sources: "<b>Data:</b> El Niño index, pressure and cloud data from the NOAA Climate Prediction Center · Ocean temperature from NOAA ERSST v5 · Rainfall from GPCP v2.3 (NOAA) · Town rainfall from CHIRPS v3 (Climate Hazards Center, UC Santa Barbara).",
+    limits: "<b>Limits:</b> the model is simple. The island-wide rain uses coarse data (about 2 points cover Sri Lanka). The town table uses finer 5 km data (CHIRPS, with 1987 and 2003 missing) but is still a rough guide. Only a few strong El Niños have happened since 1979.",
   },
   si: {
     title: "ශ්‍රී ලංකාවේ El Niño අනාවැකිය",
@@ -290,6 +303,9 @@ const T = {
     tipChance: p => `සාමාන්‍යයට වඩා වැසි වැඩිවීමේ සම්භාවිතාව: ${p}`,
     showNumbers: "සංඛ්‍යා පෙන්වන්න",
     rainHead: ["මාසය", "බලාපොරොත්තු වන වෙනස (මි.මී.)", "විය හැකි පරාසය (මි.මී.)", "වැසි වැඩිවීමේ සම්භාවිතාව"],
+    townH: "නගරය අනුව",
+    townP: "සාමාන්‍ය මාසයකට සාපේක්ෂව බලාපොරොත්තු වන වැසි වෙනස, මි.මී. වලින්. <b>නිල්</b> = සාමාන්‍යයට වඩා වැසි වැඩිවීමට ඉඩ ඇත, <b>රතු</b> = වැසි අඩුවීමට ඉඩ ඇත. තද පාට = වඩා විශ්වාසයි.",
+    townNote: "එක් එක් නගරය සඳහා ගත්තේ එය වටා කි.මී. 20 ක් පමණ ප්‍රදේශයේ සාමාන්‍යයයි. මෙය කි.මී. 5 චන්ද්‍රිකා හා වැසි මානක දත්ත (CHIRPS) මත පදනම් වෙනවා. වැසි කෙටි දුරකදී වුවද බොහෝ වෙනස් වන නිසා, මෙය නිශ්චිත ප්‍රමාණයක් ලෙස නොව පොදු රටාවක් ලෙස භාවිතා කරන්න.",
     whyH: "සමහර මාසවල වැසි වැඩි වී, තවත් මාසවල අඩු වන්නේ ඇයි?",
     whyP: "El Niño ශ්‍රී ලංකාවට බලපාන්නේ සෘතුව අනුව වෙනස් ආකාරයටයි. 1979 සිට අද දක්වා El Niño වසරවලදී ශ්‍රී ලංකාවේ වැසි වලට සිදු වූ දේ මෙයයි:",
     effMore: "වැසි වැඩියි", effLess: "වැසි අඩුයි", effNone: "සුළු බලපෑමක්",
@@ -324,8 +340,8 @@ const T = {
       ["විය හැකි පරාසය", "සැබෑ අගය මෙම පරාසය තුළ වැටෙනු ඇතැයි 10 න් 8 වතාවක් අපේක්ෂා කෙරෙනවා."],
       ["මි.මී. (වැසි)", "මාසයක් තුළ ලැබෙන වැසි ප්‍රමාණය මිලිමීටර වලින්. “+50 මි.මී.” යනු සාමාන්‍ය මාසයකට වඩා මි.මී. 50 ක් වැඩි වැසි බවයි."],
     ],
-    sources: "<b>දත්ත:</b> El Niño දර්ශකය, වායු පීඩන හා වලාකුළු දත්ත NOAA Climate Prediction Center වෙතින් · සාගර උෂ්ණත්වය NOAA ERSST v5 වෙතින් · වැසි දත්ත GPCP v2.3 (NOAA) වෙතින්.",
-    limits: "<b>සීමා:</b> මෙම model එක සරලයි. වැසි දත්ත විශාල කොටු වලින් (ශ්‍රී ලංකාව ආවරණය වන්නේ ලක්ෂ 2 කින් පමණ) සමන්විත නිසා, මෙයින් පෙන්වන්නේ මුළු දිවයිනේම තත්ත්වයයි, දිස්ත්‍රික්ක අනුව නොවේ. 1979 සිට ප්‍රබල El Niño ඇති වී ඇත්තේ කිහිප වතාවක් පමණයි.",
+    sources: "<b>දත්ත:</b> El Niño දර්ශකය, වායු පීඩන හා වලාකුළු දත්ත NOAA Climate Prediction Center වෙතින් · සාගර උෂ්ණත්වය NOAA ERSST v5 වෙතින් · වැසි දත්ත GPCP v2.3 (NOAA) වෙතින් · නගර අනුව වැසි දත්ත CHIRPS v3 (Climate Hazards Center, UC Santa Barbara) වෙතින්.",
+    limits: "<b>සීමා:</b> මෙම model එක සරලයි. මුළු දිවයිනේම වැසි සඳහා භාවිතා කළ දත්ත විශාල කොටු වලින් (ශ්‍රී ලංකාව ආවරණය වන්නේ ලක්ෂ 2 කින් පමණ) සමන්විතයි. නගර වගුව කි.මී. 5 දත්ත (CHIRPS, 1987 සහ 2003 නොමැතිව) භාවිතා කළත්, එයද දළ මාර්ගෝපදේශයක් පමණයි. 1979 සිට ප්‍රබල El Niño ඇති වී ඇත්තේ කිහිප වතාවක් පමණයි.",
   },
 };
 
@@ -439,6 +455,9 @@ function renderText() {
   const neg = css("--div-neg"), mid = css("--div-mid"), pos = css("--div-pos");
   const corr = { ...DATA.corr, columns: MONTHS[lang].map(m => (lang === "en" ? m.slice(0, 3) : m)) };
   heatTable($("corrTable"), corr, v => v < 0 ? mix(mid, neg, Math.min(1, -v / 0.8)) : mix(mid, pos, Math.min(1, v / 0.8)), v => signed(v, 1));
+  const towns = { columns: DATA.towns.months.map(m => monthName(m, true)), rows: DATA.towns.rows };   // cell = [mm, chance wetter]
+  heatTable($("townTable"), towns, ([, p]) => p < 0.5 ? mix(mid, neg, Math.min(1, (0.5 - p) / 0.4)) : mix(mid, pos, Math.min(1, (p - 0.5) / 0.4)),
+    ([mm]) => signed(mm, 0));
   heatTable($("riskTable"), DATA.risk, v => mix(css("--seq-lo"), css("--seq-hi"), Math.min(1, v / 0.8)), v => v.toFixed(2));
 }
 

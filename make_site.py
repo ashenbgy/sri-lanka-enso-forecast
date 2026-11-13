@@ -52,6 +52,10 @@ data = {
     "risk": matrix("regional_risk.csv"),
     "corr": matrix("rain_vs_oni_by_month.csv"),
 }
+town_mm, town_p = matrix("sri_lanka_towns_rain_mm.csv"), matrix("sri_lanka_towns_chance_wetter.csv")
+data["towns"] = {"months": [iso(r[0]) for r in town_mm["rows"]],      # rows = towns, cell = [mm, chance wetter]
+                 "rows": [[t] + [[m[j + 1], p[j + 1]] for m, p in zip(town_mm["rows"], town_p["rows"])]
+                          for j, t in enumerate(town_mm["columns"])]}
 
 html = (HERE / "site" / "template.html").read_text(encoding="utf-8")
 assert "__DATA__" in html
