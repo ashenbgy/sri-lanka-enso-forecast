@@ -5,7 +5,7 @@
 
 Usage:  python3 make_site.py [path/to/results.zip]      (default: output/results.zip)
 """
-import csv, io, json, re, sys, zipfile
+import base64, csv, io, json, re, sys, zipfile
 from datetime import date, datetime
 from pathlib import Path
 
@@ -56,6 +56,8 @@ town_mm, town_p = matrix("sri_lanka_towns_rain_mm.csv"), matrix("sri_lanka_towns
 data["towns"] = {"months": [iso(r[0]) for r in town_mm["rows"]],      # rows = towns, cell = [mm, chance wetter]
                  "rows": [[t] + [[m[j + 1], p[j + 1]] for m, p in zip(town_mm["rows"], town_p["rows"])]
                           for j, t in enumerate(town_mm["columns"])]}
+data["map_png"] = base64.b64encode(z.read("7_sri_lanka_map.png")).decode()     # page stays one self-contained file
+data["faq_si"] = (HERE / "FAQ_si.md").read_text(encoding="utf-8")
 
 html = (HERE / "site" / "template.html").read_text(encoding="utf-8")
 assert "__DATA__" in html

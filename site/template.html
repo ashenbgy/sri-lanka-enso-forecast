@@ -94,6 +94,9 @@ p { margin: 0 0 12px; }
 .key i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
 details { margin-top: 14px; border-top: 1px solid var(--grid); padding-top: 10px; }
 summary { cursor: pointer; color: var(--s1); font-weight: 600; font-size: 0.95rem; }
+.map { display: block; width: 100%; height: auto; margin-top: 14px; border-radius: 8px; background: #fff; }
+#faq h3 { margin: 22px 0 0; font-size: 1.05rem; }
+#faq summary { color: var(--ink); }
 .scroll { overflow-x: auto; margin-top: 12px; }
 table { border-collapse: collapse; width: 100%; font-size: 0.9rem; font-variant-numeric: tabular-nums; }
 th, td { padding: 6px 8px; text-align: right; border-bottom: 1px solid var(--grid); white-space: nowrap; }
@@ -140,6 +143,9 @@ footer { margin-top: 28px; color: var(--ink-2); font-size: 0.9rem; }
     <p class="sub" data-t="townP"></p>
     <div class="scroll"><table class="heat" id="townTable"></table></div>
     <p class="small" data-t="townNote"></p>
+    <details><summary data-t="mapShow"></summary>
+      <p class="small" data-t="mapHelp"></p>
+      <img class="map" id="townMap" alt=""></details>
   </section>
 
   <section class="card">
@@ -182,6 +188,11 @@ footer { margin-top: 28px; color: var(--ink-2); font-size: 0.9rem; }
     <dl id="gloss"></dl>
   </section>
 
+  <section class="card" lang="si">
+    <h2 data-t="faqH"></h2>
+    <div id="faq"></div>
+  </section>
+
   <footer>
     <p data-t="sources"></p>
     <p data-t="limits"></p>
@@ -189,6 +200,7 @@ footer { margin-top: 28px; color: var(--ink-2); font-size: 0.9rem; }
 </main>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
 <script>
 const DATA = __DATA__;
 const F = DATA.forecast, R = DATA.rain, K = DATA.skill;
@@ -239,6 +251,10 @@ const T = {
     townH: "Town by town",
     townP: "Expected rain compared with a normal month, in mm. <b>Blue</b> = more rain than usual is likely, <b>red</b> = less rain is likely. Darker = more certain.",
     townNote: "Each town is the average of the area about 20 km around it, from 5 km satellite and rain-gauge data (CHIRPS). Rain varies a lot over short distances, so use this for the general pattern, not exact amounts.",
+    mapShow: "Show the 5 km map",
+    mapHelp: "Chance of a wetter-than-normal month at every 5 km point. Green = wetter is likely, brown = drier is likely. Black dots are the towns in the table.",
+    mapAlt: "Map of Sri Lanka for each of the next 12 months, coloured by the chance of a wetter-than-normal month",
+    faqH: "Questions and answers (in Sinhala)",
     whyH: "Why more rain in some months and less in others?",
     whyP: "El Niño affects Sri Lanka differently in each season. This is what happened to Sri Lanka's rain in past El Niño years (1979 to today):",
     effMore: "More rain", effLess: "Less rain", effNone: "Little effect",
@@ -306,6 +322,10 @@ const T = {
     townH: "නගරය අනුව",
     townP: "සාමාන්‍ය මාසයකට සාපේක්ෂව බලාපොරොත්තු වන වැසි වෙනස, මි.මී. වලින්. <b>නිල්</b> = සාමාන්‍යයට වඩා වැසි වැඩිවීමට ඉඩ ඇත, <b>රතු</b> = වැසි අඩුවීමට ඉඩ ඇත. තද පාට = වඩා විශ්වාසයි.",
     townNote: "එක් එක් නගරය සඳහා ගත්තේ එය වටා කි.මී. 20 ක් පමණ ප්‍රදේශයේ සාමාන්‍යයයි. මෙය කි.මී. 5 චන්ද්‍රිකා හා වැසි මානක දත්ත (CHIRPS) මත පදනම් වෙනවා. වැසි කෙටි දුරකදී වුවද බොහෝ වෙනස් වන නිසා, මෙය නිශ්චිත ප්‍රමාණයක් ලෙස නොව පොදු රටාවක් ලෙස භාවිතා කරන්න.",
+    mapShow: "කි.මී. 5 සිතියම පෙන්වන්න",
+    mapHelp: "සෑම කි.මී. 5 ලක්ෂ්‍යයකම සාමාන්‍යයට වඩා වැසි වැඩි මාසයක් ඇතිවීමේ සම්භාවිතාව. කොළ = වැසි වැඩිවීමට ඉඩ ඇත, දුඹුරු = වැසි අඩුවීමට ඉඩ ඇත. කළු තිත් = වගුවේ ඇති නගර.",
+    mapAlt: "ඉදිරි මාස 12 සඳහා, සාමාන්‍යයට වඩා වැසි වැඩිවීමේ සම්භාවිතාව අනුව වර්ණ ගැන්වූ ශ්‍රී ලංකා සිතියම්",
+    faqH: "නිතර අසන ප්‍රශ්න",
     whyH: "සමහර මාසවල වැසි වැඩි වී, තවත් මාසවල අඩු වන්නේ ඇයි?",
     whyP: "El Niño ශ්‍රී ලංකාවට බලපාන්නේ සෘතුව අනුව වෙනස් ආකාරයටයි. 1979 සිට අද දක්වා El Niño වසරවලදී ශ්‍රී ලංකාවේ වැසි වලට සිදු වූ දේ මෙයයි:",
     effMore: "වැසි වැඩියි", effLess: "වැසි අඩුයි", effNone: "සුළු බලපෑමක්",
@@ -451,6 +471,8 @@ function renderText() {
     r.Climatology.toFixed(2), pct(r["Skill vs persistence"])]));
 
   $("gloss").innerHTML = t("gloss").map(([w, d]) => `<dt>${w}</dt><dd>${d}</dd>`).join("");
+  $("townMap").src = "data:image/png;base64," + DATA.map_png;
+  $("townMap").alt = t("mapAlt");
 
   const neg = css("--div-neg"), mid = css("--div-mid"), pos = css("--div-pos");
   const corr = { ...DATA.corr, columns: MONTHS[lang].map(m => (lang === "en" ? m.slice(0, 3) : m)) };
@@ -459,6 +481,19 @@ function renderText() {
   heatTable($("townTable"), towns, ([, p]) => p < 0.5 ? mix(mid, neg, Math.min(1, (0.5 - p) / 0.4)) : mix(mid, pos, Math.min(1, (p - 0.5) / 0.4)),
     ([mm]) => signed(mm, 0));
   heatTable($("riskTable"), DATA.risk, v => mix(css("--seq-lo"), css("--seq-hi"), Math.min(1, v / 0.8)), v => v.toFixed(2));
+}
+
+// ── Questions & answers (FAQ_si.md, Sinhala only) ───────────────────────────
+// "## group" → heading, "### question" → one expandable item. The intro before the first "---" is skipped.
+function renderFaq() {
+  if (!window.marked) return;   // offline: the CDN script did not load
+  const body = DATA.faq_si.split(/\n---\n/).slice(1).join("\n");
+  $("faq").innerHTML = body.split(/\n(?=#{2,3} )/).map(part => {
+    const [first, ...rest] = part.trim().split("\n");
+    if (first.startsWith("### ")) return `<details><summary>${first.slice(4)}</summary>${marked.parse(rest.join("\n"))}</details>`;
+    if (first.startsWith("## ")) return `<h3>${first.slice(3)}</h3>`;
+    return "";
+  }).join("");
 }
 
 // ── Charts ──────────────────────────────────────────────────────────────────
@@ -547,7 +582,7 @@ function drawCharts() {
   }));
 }
 
-function render() { renderText(); if (window.Chart) drawCharts(); }
+function render() { renderText(); renderFaq(); if (window.Chart) drawCharts(); }
 document.querySelectorAll("[data-lang]").forEach(b => b.addEventListener("click", () => {
   lang = b.dataset.lang; try { localStorage.setItem("lang", lang); } catch (e) {}
   render();
