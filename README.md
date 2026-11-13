@@ -4,8 +4,6 @@ A single Jupyter notebook that downloads **real NOAA climate data**, forecasts t
 **Oceanic Niño Index (ONI)** up to 12 months ahead, and turns it into a
 **month-by-month rainfall outlook for Sri Lanka**.
 
-**සිංහලෙන්:** [නිතර අසන ප්‍රශ්න සහ පිළිතුරු](FAQ_si.md)
-
 <!-- results:start -->
 ## Results
 
@@ -97,18 +95,6 @@ At the forecast peak:
 
 Lower error is better. The model (blue) beats both simple guesses at every lead time from 1 to 12 months.
 
-### සිංහල සාරාංශය
-
-- **දැන් El Niño තත්ත්වයක් තියෙනවා.** Sep 2026 ONI අගය **+2.46 °C**. 1979 සිට වැඩිම අගය +2.59 °C.
-- **අනාවැකිය:** El Niño එක **Nov 2026** පමණ වෙද්දී උපරිමයට (**+2.78 °C**) යනවා.
-  ඊට පස්සේ Sep 2027 වෙද්දී ඒක දුර්වල වෙනවා.
-- **ශ්‍රී ලංකාව:** සාමාන්‍යයට වඩා **වැඩි වැසි**: Oct 2026, Nov 2026, Dec 2026, May 2027.
-  සාමාන්‍යයට වඩා **අඩු වැසි / වියළි**: Jan 2027, Feb 2027, Mar 2027, Apr 2027.
-- El Niño එක ලංකාවේ වැසි වලට බලපාන විදිය කාලය අනුව වෙනස් වෙනවා. ඔක්තෝබර් කාලයේ වැසි වැඩි වෙනවා,
-  ජනවාරි–අප්‍රේල් කාලයේ වියළි වෙනවා.
-- Model එක පුහුණු කරද්දී පාවිච්චි නොකරපු 2015 සිට අද දක්වා දත්ත වලින් test කළාම,
-  ඒකේ වැරදි "කිසිම වෙනසක් නැහැ" කියන අනුමානයට වඩා **35% කින් අඩුයි**.
-- මේක නිල අනාවැකියක් නෙවෙයි. තීරණ ගන්න කලින් කාලගුණ විද්‍යා දෙපාර්තමේන්තුවේ අනාවැකි බලන්න.
 <!-- results:end -->
 
 ## Run it
