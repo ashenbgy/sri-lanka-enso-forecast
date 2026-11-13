@@ -4,6 +4,8 @@ A single Jupyter notebook that downloads **real NOAA climate data**, forecasts t
 **Oceanic Niño Index (ONI)** up to 12 months ahead, and turns it into a
 **month-by-month rainfall outlook for Sri Lanka**.
 
+**සිංහලෙන්:** [නිතර අසන ප්‍රශ්න සහ පිළිතුරු](FAQ_si.md)
+
 <!-- results:start -->
 ## Results
 
