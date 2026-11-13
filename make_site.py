@@ -1,5 +1,5 @@
 """Publish the notebook's results.zip in readable form:
-  - README.md  "Results" section (plain-language summary, charts, tables, Sinhala summary)
+  - README.md  "Results" section (plain-language summary, charts, tables)
   - images/    the charts used by the README
   - docs/index.html  interactive results page
 
@@ -57,7 +57,6 @@ data["towns"] = {"months": [iso(r[0]) for r in town_mm["rows"]],      # rows = t
                  "rows": [[t] + [[m[j + 1], p[j + 1]] for m, p in zip(town_mm["rows"], town_p["rows"])]
                           for j, t in enumerate(town_mm["columns"])]}
 data["map_png"] = base64.b64encode(z.read("7_sri_lanka_map.png")).decode()     # page stays one self-contained file
-data["faq_si"] = (HERE / "FAQ_si.md").read_text(encoding="utf-8")
 
 html = (HERE / "site" / "template.html").read_text(encoding="utf-8")
 assert "__DATA__" in html
@@ -178,18 +177,6 @@ At the forecast peak:
 
 Lower error is better. The model (blue) beats both simple guesses at every lead time from 1 to 12 months.
 
-### සිංහල සාරාංශය
-
-- **දැන් El Niño තත්ත්වයක් තියෙනවා.** {last} ONI අගය **{sgn(data['last_oni'], 2)} °C**. 1979 සිට වැඩිම අගය {sgn(record['oni'], 2)} °C.
-- **අනාවැකිය:** El Niño එක **{mon(peak['month'])}** පමණ වෙද්දී උපරිමයට (**{sgn(peak['oni_mean'], 2)} °C**) යනවා.
-  ඊට පස්සේ {mon(end['month'])} වෙද්දී ඒක දුර්වල වෙනවා.
-- **ශ්‍රී ලංකාව:** සාමාන්‍යයට වඩා **වැඩි වැසි**: {month_list(wet)}.
-  සාමාන්‍යයට වඩා **අඩු වැසි / වියළි**: {month_list(dry)}.
-- El Niño එක ලංකාවේ වැසි වලට බලපාන විදිය කාලය අනුව වෙනස් වෙනවා. ඔක්තෝබර් කාලයේ වැසි වැඩි වෙනවා,
-  ජනවාරි–අප්‍රේල් කාලයේ වියළි වෙනවා.
-- Model එක පුහුණු කරද්දී පාවිච්චි නොකරපු 2015 සිට අද දක්වා දත්ත වලින් test කළාම,
-  ඒකේ වැරදි "කිසිම වෙනසක් නැහැ" කියන අනුමානයට වඩා **{gain:.0%} කින් අඩුයි**.
-- මේක නිල අනාවැකියක් නෙවෙයි. තීරණ ගන්න කලින් කාලගුණ විද්‍යා දෙපාර්තමේන්තුවේ අනාවැකි බලන්න.
 """
 
 readme_path = HERE / "README.md"
