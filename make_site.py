@@ -61,7 +61,7 @@ out.write_text(html.replace("__DATA__", json.dumps(data, ensure_ascii=False)), e
 print(f"wrote {out}  (data through {data['last_month']})")
 
 # ── README "Results" section ──────────────────────────────────────────────────
-IMAGES = ["5_sri_lanka_rain_outlook.png", "4_oni_forecast.png", "2_rain_vs_oni_by_month.png",
+IMAGES = ["5_sri_lanka_rain_outlook.png", "7_sri_lanka_map.png", "4_oni_forecast.png", "2_rain_vs_oni_by_month.png",
           "6_regional_risk.png", "3_forecast_skill.png"]
 (HERE / "images").mkdir(exist_ok=True)
 for name in IMAGES:
@@ -99,6 +99,12 @@ rain_table = "\n".join(
     f"| {sgn(r['p10_mm'])} to {sgn(r['p90_mm'])} mm | {r['chance_wetter_than_normal']:.0%} |"
     for r in rain)
 
+towns = matrix("sri_lanka_towns_rain_mm.csv")       # rows = months, columns = towns
+town_head = "| Town | " + " | ".join(mon(iso(r[0]))[:3] + " " + r[0][2:4] for r in towns["rows"]) + " |"
+town_table = "\n".join([town_head, "|---" + "|---:" * len(towns["rows"]) + "|"] + [
+    f"| {t} | " + " | ".join(sgn(r[j + 1]) for r in towns["rows"]) + " |"
+    for j, t in enumerate(towns["columns"])])
+
 last = mon(data["last_month"])
 section = f"""## Results
 
@@ -124,6 +130,15 @@ official one. Check NOAA CPC, IRI or the Sri Lanka Department of Meteorology bef
 | Month | Outlook | Expected | Likely range (10–90 %) | Chance of wetter than normal |
 |---|---|---:|---:|---:|
 {rain_table}
+
+### Town by town (5 km CHIRPS rainfall)
+
+![Sri Lanka 5 km map: chance of a wetter-than-normal month](images/7_sri_lanka_map.png)
+
+Green means a wetter-than-normal month is likely, and brown means drier. The table shows the expected
+difference from normal rainfall in mm per month.
+
+{town_table}
 
 ### El Niño forecast
 
